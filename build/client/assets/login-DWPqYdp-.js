@@ -1,0 +1,1 @@
+import{j as e}from"./jsx-runtime-56DGgGmo.js";import{F as r}from"./components-BX8V9fuq.js";console.log("Login route");function s(){return e.jsxs(r,{method:"post",children:[e.jsx("input",{type:"email",name:"email",required:!0}),e.jsx("input",{type:"password",name:"password",autoComplete:"current-password",required:!0}),e.jsx("button",{children:"Sign In"})]})}export{s as default};

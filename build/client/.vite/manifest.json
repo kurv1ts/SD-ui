@@ -1,0 +1,61 @@
+{
+  "_components-BX8V9fuq.js": {
+    "file": "assets/components-BX8V9fuq.js",
+    "name": "components",
+    "imports": [
+      "_jsx-runtime-56DGgGmo.js"
+    ]
+  },
+  "_jsx-runtime-56DGgGmo.js": {
+    "file": "assets/jsx-runtime-56DGgGmo.js",
+    "name": "jsx-runtime"
+  },
+  "app/entry.client.tsx": {
+    "file": "assets/entry.client-jgdZZHIj.js",
+    "name": "entry.client",
+    "src": "app/entry.client.tsx",
+    "isEntry": true,
+    "imports": [
+      "_jsx-runtime-56DGgGmo.js",
+      "_components-BX8V9fuq.js"
+    ]
+  },
+  "app/root.tsx?__remix-build-client-route": {
+    "file": "assets/root-B1un3pzZ.js",
+    "name": "root",
+    "src": "app/root.tsx?__remix-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_jsx-runtime-56DGgGmo.js",
+      "_components-BX8V9fuq.js"
+    ],
+    "css": [
+      "assets/root-C1cZVWro.css"
+    ]
+  },
+  "app/routes/_index.tsx?__remix-build-client-route": {
+    "file": "assets/_index-B6hwyHK-.js",
+    "name": "_index",
+    "src": "app/routes/_index.tsx?__remix-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_jsx-runtime-56DGgGmo.js"
+    ]
+  },
+  "app/routes/dashboard.tsx?__remix-build-client-route": {
+    "file": "assets/dashboard-l0sNRNKZ.js",
+    "name": "dashboard",
+    "src": "app/routes/dashboard.tsx?__remix-build-client-route",
+    "isEntry": true
+  },
+  "app/routes/login.tsx?__remix-build-client-route": {
+    "file": "assets/login-DWPqYdp-.js",
+    "name": "login",
+    "src": "app/routes/login.tsx?__remix-build-client-route",
+    "isEntry": true,
+    "imports": [
+      "_jsx-runtime-56DGgGmo.js",
+      "_components-BX8V9fuq.js"
+    ]
+  }
+}
