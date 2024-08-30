@@ -13,24 +13,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1"
+        />
         <Meta />
         <Links />
       </head>
       <body>
-        {children} {/* Render children within the layout */}
-        <ScrollRestoration />
+        {/* children will be the root Component, ErrorBoundary, or HydrateFallback */}
+        {children}
         <Scripts />
+        <ScrollRestoration />
       </body>
     </html>
   );
 }
 
-// The App component wraps the Outlet with the Layout component
 export default function App() {
-  return (
-    <Layout>
-      <Outlet /> {/* Renders the matched route component, such as your index.tsx */}
-    </Layout>
-  );
+  return <Outlet />;
 }
+
