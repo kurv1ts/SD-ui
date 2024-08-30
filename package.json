@@ -8,7 +8,7 @@
     "build": "remix vite:build",
     "dev": "remix vite:dev",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
-    "start": "node ./build/server/index.js",
+    "start": "tsc && node ./dist/server/index.js",
     "typecheck": "tsc"
   },
   "dependencies": {
