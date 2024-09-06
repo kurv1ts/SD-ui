@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
+// Helper function to create a GIF from base64 images
+import GIFEncoder from 'gifencoder';
+import { createCanvas, loadImage } from 'canvas';
 import { Buffer } from 'buffer';
 
 export const meta: MetaFunction = () => {
@@ -23,9 +26,10 @@ export async function loader() {
   return json({ gifUrl: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZTFtaDZvajA2cjVtajYxbHNob3F2OWh1bjlvcWtybDNkdThoMHRvaSZlcD12MV9naWZzX3RyZW5kaW5nJmN0PWc/sTczweWUTxLqg/giphy.gif" }, { status: 200 });
 }
 
-// Action function to handle the GIF generation request
 export async function action({ request }: LoaderFunctionArgs) {
   console.log("Requesting GIF generation...");
+  
+  // Get the form data from the request
   const formData = await request.formData();
   const prompt = formData.get("prompt");
 
@@ -34,21 +38,67 @@ export async function action({ request }: LoaderFunctionArgs) {
   }
 
   try {
+    // Make a request to the FastAPI backend
     const response = await axios.post(
-      "http://34.118.97.20:8000/generate-gif",
+      "http://3.250.146.47:8000/generate-gif",
       { prompt },
-      { responseType: "arraybuffer", headers: { "Authorization": process.env.API_KEY }, timeout: 10000 }
+      {
+        headers: { "Authorization": process.env.API_KEY }, // Add Authorization header
+        timeout: 1000*20,
+      }
     );
 
-    const base64GIF = Buffer.from(response.data, "binary").toString("base64");
+    // Check if the response contains base64 images
+    const image_base64 = [response.data.data];
+
+    // Assuming image_base64 contains two images for the GIF creation
+    const gifBuffer = await createGIF(image_base64);
 
     // Return the base64 encoded GIF to the client
+    const base64GIF = gifBuffer.toString("base64");
     return json({ base64GIF });
   } catch (error) {
     console.error("Error generating GIF:", error);
-    return json({ error: "Failed to generate GIF. Please try again.", gifUrl: "https://media.giphy.com/media/J5qSEmqUmgdQjvnCS4/giphy.gif" }, { status: 500 });
+
+    // Return a fallback response in case of an error
+    return json(
+      {
+        error: "Failed to generate GIF. Please try again.",
+        gifUrl: "https://media.giphy.com/media/J5qSEmqUmgdQjvnCS4/giphy.gif", // Fallback GIF URL
+      },
+      { status: 500 }
+    );
   }
 }
+
+
+
+// Helper function to create GIF from base64 PNGs
+async function createGIF(imagesBase64: string[]): Promise<Buffer> {
+  const encoder = new GIFEncoder(500, 500); // Specify the width and height of your GIF
+  const canvas = createCanvas(500, 500);
+  const ctx = canvas.getContext('2d');
+  
+  // Start encoding GIF
+  encoder.start();
+  encoder.setRepeat(0); // 0 for infinite loop
+  encoder.setDelay(500); // 500ms between frames
+  encoder.setQuality(10); // Image quality
+
+  for (const imageBase64 of imagesBase64) {
+    const image = await loadImage(`data:image/png;base64,${imageBase64}`);
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas before drawing
+    ctx.drawImage(image, 0, 0, 500, 500); // Draw image on canvas
+    encoder.addFrame(ctx); // Add canvas frame to GIF
+  }
+
+  // Finish encoding the GIF
+  encoder.finish();
+
+  // Return the GIF as a buffer
+  return encoder.out.getData();
+}
+
 
 
 
@@ -64,15 +114,22 @@ export default function Index() {
     if (actionData) {
       setLoading(false);
       setError(actionData.error || null);
+  
       if (actionData.base64GIF) {
-        const gifBlob = new Blob([Buffer.from(actionData.base64GIF, 'base64')], { type: 'image/gif' });
+        const byteCharacters = atob(actionData.base64GIF);
+        const byteNumbers = new Array(byteCharacters.length)
+          .fill(0)
+          .map((_, i) => byteCharacters.charCodeAt(i));
+        const byteArray = new Uint8Array(byteNumbers);
+        const gifBlob = new Blob([byteArray], { type: 'image/gif' });
+  
         const gifObjectURL = URL.createObjectURL(gifBlob);
         setGifUrl(gifObjectURL);
-      } else {
-        setGifUrl(actionData.gifUrl);
+      } else if (actionData.gifUrl) {
+        setGifUrl(actionData.gifUrl); // Use fallback URL if provided
       }
     } else if (loader) {
-      setGifUrl(loader.gifUrl);
+      setGifUrl(loader.gifUrl); // Handle any loader-based fallback
     }
   }, [actionData, loader]);
 

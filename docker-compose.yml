@@ -9,6 +9,8 @@ services:
       NODE_ENV: dev
     networks:
       - app-network
+    volumes:
+      - .:/app
 
 networks:
   app-network:
